@@ -13,7 +13,8 @@ import React, {
   View
 } from 'react-native';
 
-var REQUEST_URL = 'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json';
+
+var REQUEST_URL = 'http://cms-article-schema.s3.amazonaws.com/papi/2015/01/01/us/test-superarticle.html';
 
 class AwesomeProject extends Component {
 
@@ -36,7 +37,7 @@ class AwesomeProject extends Component {
       .then((response) => response.json())
       .then((responseData) => {
         this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(responseData.movies),
+          dataSource: this.state.dataSource.cloneWithRows(responseData.result.article.body_json),
           loaded: true,
         });
       })
@@ -71,13 +72,12 @@ class AwesomeProject extends Component {
   renderMovie(movie) {
     return (
       <View style={styles.container}>
-        <Image
-          style={styles.thumbnail}
-          source={{uri: movie.posters.thumbnail}}
-        />
 
         <View style={styles.rightContainer}>
-          <Text style={styles.title}>{movie.title}</Text>
+          <Text style={styles.title}>{movie.text}</Text>
+          <Text style={styles.title}>{movie.type}</Text>
+          <Text style={styles.title}>{movie.position}</Text>
+          <Text style={styles.title}>{movie.credit}</Text>
           <Text style={styles.year}>{movie.year}</Text>
         </View>
       </View>
@@ -92,6 +92,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+  },
+  italic: {
+    color: 'blue',
   },
   rightContainer: {
     flex: 1,
