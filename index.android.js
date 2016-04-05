@@ -7,6 +7,7 @@ import React, {
   AppRegistry,
   Component,
   Image,
+  Animated,
   ListView,
   StyleSheet,
   Text,
@@ -75,39 +76,37 @@ class AwesomeProject extends Component {
 
   renderArticle(article) {
 
-
     switch (article.type) {
-
-
-
-
       case "paragraph":   return (<Paragraph data={article}/>);
       case "heading1":    return (<Heading1 data={article}/>);
       case "heading2":    return (<Heading2 data={article}/>);
       case "heading3":    return (<Heading3 data={article}/>);
       case "heading4":    return (<Heading4 data={article}/>);
-      case "heading5":    return (<Heading5 data={article}/>);
       case "kicker":      return (<Kicker data={article}/>);
+      case "small":       return (<Small data={article}/>);
       case "byline_date": return (<BylineDate data={article}/>);
       case "blockquote":  return (<BlockQuote data={article}/>);
       case "pullquote":   return (<PullQuote data={article}/>);
       case "image":       return (<ImageObj data={article}/>);
+      case "moving_image": return (<ImageMoving data={article}/>);
       case "video":       return (<VideoObj data={article}/>);
       case "audio":       return (<Audio data={article}/>);
      default:            return (<Text data={article}>mydefault</Text>);
     }
-
   }
 }
 
 class Paragraph extends Component {
   render() {
+
+    if(typeof (this.props.data.formats) === "object") {
+      return (
+        <Text style={styles.paragraphFormat}>{this.props.data.text}</Text>
+      );
+    }
+
     return (
-      <View style={styles.container}>
-        <Text style={styles.paragraph}>
-          {this.props.data.text}
-        </Text>
-        </View>
+      <Text style={styles.paragraph}>{this.props.data.text}</Text>
     );
   }
 }
@@ -115,7 +114,9 @@ class Paragraph extends Component {
 class Heading1 extends Component {
   render() {
     return (
-      <Text style={styles.h1}>{this.props.data.text}</Text>
+      <Text
+        style={styles.h1}>{this.props.data.text}
+      </Text>
     );
   }
 }
@@ -123,7 +124,10 @@ class Heading1 extends Component {
 class Heading2 extends Component {
   render() {
     return (
-      <Text style={styles.h2}>{this.props.data.text}</Text>
+      <Text
+        style={styles.h2}>
+        {this.props.data.text}
+      </Text>
     );
   }
 }
@@ -131,7 +135,10 @@ class Heading2 extends Component {
 class Heading3 extends Component {
   render() {
     return (
-      <Text style={styles.h3}>{this.props.data.text}</Text>
+      <Text
+        style={styles.h3}>
+        {this.props.data.text}
+      </Text>
     );
   }
 }
@@ -139,11 +146,11 @@ class Heading3 extends Component {
 class Heading4 extends Component {
   render() {
     return (
-      <Text style={styles.h4}>{this.props.data.text}</Text>
+      <Text
+        style={styles.h4}>{this.props.data.text}</Text>
     );
   }
 }
-
 
 class Heading5 extends Component {
   render() {
@@ -161,6 +168,13 @@ class Kicker extends Component {
   }
 }
 
+class Small extends Component {
+  render() {
+    return (
+      <Text style={styles.small}>{this.props.data.text}</Text>
+    );
+  }
+}
 
 class BylineDate extends Component {
   render() {
@@ -173,9 +187,9 @@ class BylineDate extends Component {
       });
 
       return (
-        <Text >
-          <Text style={styles.byline}>{bylines.label}</Text>
-          {authorNodes}
+        <Text style={styles.byline}>
+            <Text>{bylines.label}</Text>
+            {authorNodes}
         </Text>
       );
     });
@@ -194,7 +208,7 @@ class BylineDate extends Component {
 class BlockQuote extends Component {
   render() {
     return (
-      <TextUnit data={this.props.data.text}/>
+      <Text style={styles.blockQuote}>{this.props.data.text}</Text>
     );
   }
 }
@@ -202,7 +216,7 @@ class BlockQuote extends Component {
 class PullQuote extends Component {
   render() {
     return (
-      <TextUnit data={this.props.data.text}/>
+      <Text style={styles.pullQuote}>{this.props.data.text}</Text>
     );
   }
 }
@@ -223,15 +237,29 @@ class ImageObj extends Component {
   }
 }
 
+class ImageMoving extends Component {
+  render() {
+    return (
+      <View style={styles.container}>
+        <Video
+          source={{uri: this.props.data.sources.video_144p_mp4.url}}
+          resizeMode="cover"
+          style={{width: 424, height: 240}}/>
+          <Caption data={this.props.data.caption}/>
+        <Credit data={this.props.data.credit}/>
+      </View>
+    );
+  }
+}
 class VideoObj extends Component {
   render() {
     return (
       <View style={styles.container}>
         <Video
           source={{uri: this.props.data.sources.video_240p_mp4.url}}
-          style={{width: 1000, height: this.props.data.sources.video_240p_mp4.height}}/>
-        <Text>{this.props.data.type}</Text>
-        <Text>{this.props.data.summary}</Text>
+          resizeMode="cover"
+          style={{width: 424, height: 240}}/>
+        <Text style={styles.summary}>{this.props.data.summary}</Text>
         <Caption data={this.props.data.caption}/>
         <Credit data={this.props.data.credit}/>
       </View>
@@ -242,7 +270,10 @@ class VideoObj extends Component {
 class Audio extends Component {
   render() {
     return (
+      <View style={styles.audio}>
+        <Text style={styles.h3}>{this.props.data.title} </Text>
         <Credit data={this.props.data.credit}/>
+      </View>
     );
   }
 }
@@ -250,7 +281,7 @@ class Audio extends Component {
 class Caption extends Component {
   render() {
     return (
-      <Text>{this.props.data} </Text>
+      <Text style={styles.capt}>{this.props.data} </Text>
     );
   }
 }
@@ -258,16 +289,7 @@ class Caption extends Component {
 class Credit extends Component {
   render() {
     return (
-      <Text> {this.props.data} </Text>
-    );
-  }
-}
-
-
-class TextUnit extends Component {
-  render() {
-    return (
-      <Text style={styles.h1}>{this.props.copy}</Text>
+      <Text style={styles.credit}> {this.props.data} </Text>
     );
   }
 }
@@ -275,87 +297,106 @@ class TextUnit extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'blue',
-    marginBottom: 18,
-  },
-  h1: {
-    fontSize: 34,
-    fontWeight: "700",
-    fontFamily: "nyt-cheltenham,georgia,times new roman,times,serif",
-    marginBottom: 36,
-  },
-  h2: {
-    fontSize: 30,
-    fontWeight: "300",
-    fontFamily: "nyt-cheltenham, georgia, serif",
-    marginBottom: 18,
-  },
-  h3: {
-    fontSize: 18,
-    fontWeight: "700",
-    fontFamily: "nyt-cheltenham, georgia, serif",
-    marginBottom: 18,
-  },
-  h4: {
-    fontSize: 22,
-    fontWeight: "700",
-    fontFamily: "nyt-cheltenham, georgia, serif",
-    marginBottom: 18,
-  },
-  h5: {
-    fontSize: 22,
-    fontWeight: "700",
-    fontFamily: "nyt-cheltenham, georgia, serif",
-    marginBottom: 18,
-  },
-  kicker: {
-    fontSize: 22,
-    fontWeight: "700",
-    fontFamily: "nyt-cheltenham, georgia, serif",
     marginBottom: 18,
   },
   paragraph: {
-    fontStyle: 'italic'
+    fontFamily: 'NYTCheMedReg',
+    fontSize: 18,
+    marginBottom: 10,
+
+  },
+  paragraphFormat: {
+    fontFamily: 'NYTCheWidIta',
+    fontSize: 18,
+    marginBottom: 10,
+    color: 'black'
+  },
+  h1: {
+    fontFamily: 'NYTCheBolReg',
+    fontSize: 30,
+    color: 'black',
+    marginBottom: 35,
+  },
+  h2: {
+    fontFamily: 'NYTCheMedReg',
+    fontSize: 30,
+    color: 'black',
+    marginBottom: 35,
+  },
+  h3: {
+    fontFamily: 'NYTCheBolReg',
+    fontSize: 22,
+    color: 'black',
+    marginBottom: 35,
+  },
+  h4: {
+    fontSize: 18,
+    fontFamily: "NYTCheBolReg",
+    marginBottom: 35,
+    color: 'black'
+  },
+  kicker: {
+    fontSize: 13,
+    fontFamily: "NYTFraMed",
+    color: 'black',
+    marginBottom: 5,
+  },
+  small: {
+    fontSize: 14,
+    fontFamily: "NYTFraMed",
+    color: 'black',
+    marginBottom: 18,
   },
   byline: {
     fontSize: 11,
-    fontWeight: "700",
-    fontFamily: "nyt-cheltenham-sh,georgia,times new roman,times,serif"
+    fontFamily: 'NYTCheBolReg',
+    color: 'black'
   },
   bylineDate: {
-    fontWeight: "300",
-    fontFamily: "nyt-cheltenham-sh,georgia,times new roman,times,serif",
+    fontFamily: 'NYTCheMedReg',
+    fontSize: 13,
+    color: 'black',
     marginBottom: 18
   },
-  caption: {
+  capt: {
     fontSize: 13,
-    fontWeight: "300",
-    fontFamily: "nyt-cheltenham-sh,georgia,times new roman,times,serif",
+    fontFamily: 'NYTFraMed',
+    color: 'black'
   },
   credit: {
     color: '#999',
     fontSize: 11,
-    fontWeight: "300",
-    fontFamily: "nyt-cheltenham-sh,georgia,times new roman,times,serif",
+    fontFamily: 'NYTFraMed',
+  },
+  blockQuote: {
+    fontFamily: 'NYTCheWidIta',
+    fontSize: 18,
+    color: 'black',
+    marginBottom: 10
+  },
+  pullQuote: {
+    fontFamily: 'NYTCheBolRega',
+    fontSize: 38,
+    color: 'black',
+    marginBottom: 36,
+    marginTop: 36
+  },
+  summary: {
+    fontSize: 13,
+    fontFamily: 'NYTCheMedReg'
+  },
+
+  audio: {
+    marginBottom: 30
   },
   rightContainer: {
     flex: 1,
   },
-  title: {
-    fontSize: 20,
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  year: {
-    textAlign: 'center'
-  },
-  logo: {
-    width: 53,
-    height: 81
-  },
   listView: {
     paddingTop: 20,
-    backgroundColor: '#F5FCFF',
+    paddingLeft: 5,
+    paddingRight: 5,
+    paddingBottom: 100,
   },
 });
 
