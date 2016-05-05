@@ -96,6 +96,14 @@ class AwesomeProject extends Component {
   }
 }
 
+class Template extends AnotherClass {
+<Body>
+<Paragraph>{this.props.data.text}</Paragraph>
+<Video></Video>
+</Body>
+  // methods
+}
+
 class Paragraph extends Component {
   render() {
 
